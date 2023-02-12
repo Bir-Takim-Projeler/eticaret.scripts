@@ -15,7 +15,7 @@ data=$(curl -s -i -o response.txt   -w "%{http_code}"  -X POST http://localhost:
                 -d durabilityMinLevel=none); 
 
 rm response.txt 
-sleep 2s
+
 if [ $data -eq 400 ]; then
     echo -e "Bucket 'ecommerce' already exist\nSkipping creating bucket\n___________________"
 elif [ $data -eq 200 ]; then
@@ -36,7 +36,15 @@ do
     if [ $data -eq 200 ];then echo -e "Collection '$collection' created on ecommerce._default\n___"
     else echo -e "Collection '$collection' already exist in ecommerce._default. Skipped creating collection\n___"; fi
     rm response.txt 
-    sleep 1s
+    
 done
 
+
+echo -e "___________________\nSeeding db"
+
+cd "seed-db"
+
+npm install -s
+
+$(node index)
 echo "Done."

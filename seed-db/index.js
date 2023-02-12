@@ -1,7 +1,5 @@
 
 const { connect, PasswordAuthenticator } = require("couchbase");
-const { users } = require("./user");
-const { products, category } = require("./product");
 const { createId } = require("@paralleldrive/cuid2")
 
 
@@ -35,7 +33,7 @@ const users = [
         phone: "+000 0000 00",
         email: "jdoe@jdoe.com",
         address: [],
-        roles: [role[1].id],
+        roles: [roles[1].id],
         sessions: []
     },
     {
@@ -46,7 +44,7 @@ const users = [
         phone: "+100 0000 00",
         email: "mdoe@mdoe.com",
         address: [],
-        roles: [role[1].id],
+        roles: [roles[1].id],
         sessions: []
     },
     {
@@ -56,7 +54,7 @@ const users = [
         lastName: "admin",
         email: "admin@admin.com",
         address: [],
-        roles: [role[0].id]
+        roles: [roles[0].id]
     }
 ]
     
