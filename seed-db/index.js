@@ -115,7 +115,20 @@ const products = [
     const categoryCollection = bucket.collection("category")
     //#endregion /buckets
     
+
+    //#region  create indexes
+    //
+    const collections = ["user", "invertory", "address", "cart", "discount", "product", "category", "role", "session", "perm"]
     
+    for await (const collection of collections) {
+        await cluster.query(`
+          CREATE PRIMARY 
+          INDEX \`#${collection}\` ON ecommerce._default.${collection}
+        `)
+    }
+  
+    //#endregion
+
     // add users
     for await (const user of users) await userCollection.insert(user.id, user)
     
