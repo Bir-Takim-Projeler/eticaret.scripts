@@ -24,7 +24,7 @@ fi
 
 echo "Creating collections on ecommerce._default"
 
-collections=(user invertory address cart discount product category role session perm)
+collections=(user inventory address cart discount product category role session perm)
 
 
 for collection in "${collections[@]}"
