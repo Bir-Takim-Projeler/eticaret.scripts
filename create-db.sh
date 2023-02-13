@@ -42,7 +42,7 @@ done
 
 echo -e "___________________\nSeeding db"
 
-cd "seed-db"
+cd "$1/seed-db"
 
 npm install -s
 
