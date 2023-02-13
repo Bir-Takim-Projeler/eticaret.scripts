@@ -123,7 +123,7 @@ const products = [
     for await (const collection of collections) {
         await cluster.query(`
           CREATE PRIMARY 
-          INDEX \`#${collection}\` ON ecommerce._default.${collection}
+          INDEX \`#${collection}\` ON \`ecommerce\`._default.${collection}
         `)
     }
   
