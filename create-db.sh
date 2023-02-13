@@ -46,5 +46,5 @@ cd "$1/seed-db"
 
 npm install -s
 
-$(node index)
+node index -s
 echo "Done."
