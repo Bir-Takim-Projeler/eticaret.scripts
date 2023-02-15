@@ -5,9 +5,9 @@ if [ ! -x "$(which curl)" ]; then
     exit 0
 fi
 
-echo -e "Createing bucket name ecommerce on couchbas://localhost:8091\n___________________"
+echo -e "Createing bucket name ecommerce on couchbas://127.0.0.1:8091\n___________________"
 
-data=$(curl -s -i -o response.txt   -w "%{http_code}"  -X POST http://localhost:8091/pools/default/buckets \
+data=$(curl -s -i -o response.txt   -w "%{http_code}"  -X POST http://127.0.0.1:8091/pools/default/buckets \
                 -u administrator:administrator \
                 -d name=ecommerce \
                 -d bucketType=couchbase \
@@ -29,7 +29,7 @@ collections=(user inventory address cart discount product category role session 
 
 for collection in "${collections[@]}"
 do
-    data=$(curl -s -i -o response.txt   -w "%{http_code}" -X POST  http://localhost:8091/pools/default/buckets/ecommerce/scopes/_default/collections \
+    data=$(curl -s -i -o response.txt   -w "%{http_code}" -X POST  http://127.0.0.1:8091/pools/default/buckets/ecommerce/scopes/_default/collections \
             -u administrator:administrator \
             -d name="$collection" \
             -d maxTTL=0)
