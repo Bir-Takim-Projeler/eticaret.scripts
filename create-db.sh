@@ -8,33 +8,36 @@ fi
 
 echo -e "Creating cluster"
 
-data=$(curl -s -i -o response.txt   -w "%{http_code}" -X POST http://127.0.0.1:8091/clusterInit \
-  -d services=kv,n1ql,index,fts,eventing,cbas \
-  -d username=administrator  \
-  -d password=administrator \
-  -d port=SAME \
-  -d clusterName=ecommerce)
+data=$(curl -s -i -o response.txt -w "%{http_code}" -X POST http://127.0.0.1:8091/clusterInit \
+-d "services=kv%2Cn1ql" \
+-d "clusterName=ecommerce" \
+-d "memoryQuota=512" \
+-d "nodeEncryption=off" \
+-d "username=administrator" \
+-d "password=administrator" \
+-d "port=SAME" \
+-d "allowedHosts=127.0.0.1")
 
 rm response.txt 
 
-if [ $data -eq 400 ]; then
-    echo -e "Cluster 'ecommerce' already exist\nSkipping creating bucket\n___________________"
-elif [ $data -eq 200 ]; then
+  
+if [ $data -eq 200 ]; then
     echo -e "Cluster 'ecommerce' created\n___________________"
+else
+   echo -e "Cluster 'ecommerce' already exist\nSkipping creating cluster\n___________________"
 fi
 
 
 
 echo -e "Createing bucket name ecommerce on couchbas://localhost:8091\n___________________"
 
-data=$(curl -s -i -o response.txt   -w "%{http_code}"  -X POST http://localhost:8091/pools/default/buckets \
+data=$(curl -s -i -o response.txt   -w "%{http_code}"  -X POST http://127.0.0.1:8091/pools/default/buckets \
                 -u administrator:administrator \
                 -d name=ecommerce \
                 -d bucketType=couchbase \
                 -d ramQuota=512 \
                 -d durabilityMinLevel=none); 
-
-rm response.txt 
+echo $data
 
 if [ $data -eq 400 ]; then
     echo -e "Bucket 'ecommerce' already exist\nSkipping creating bucket\n___________________"
@@ -49,7 +52,7 @@ collections=(user inventory address cart discount product category role session 
 
 for collection in "${collections[@]}"
 do
-    data=$(curl -s -i -o response.txt   -w "%{http_code}" -X POST  http://localhost:8091/pools/default/buckets/ecommerce/scopes/_default/collections \
+    data=$(curl -s -i -o response.txt   -w "%{http_code}" -X POST  http://127.0.0.1:8091/pools/default/buckets/ecommerce/scopes/_default/collections \
             -u administrator:administrator \
             -d name="$collection" \
             -d maxTTL=0)
@@ -60,10 +63,11 @@ do
 done
 
 
+
+
+
+if [[ "$2" != "test" ]]; then
 echo -e "___________________\nSeeding db"
-
-
-if (( !$2 -eq "test" )); then
 cd "$1/seed-db"
 
 npm install -s
