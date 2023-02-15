@@ -40,10 +40,11 @@ do
 done
 
 
+
+
+
+if [ "$2" != "test" ]; then
 echo -e "___________________\nSeeding db"
-
-
-if (( !$2 -eq "test" )); then
 cd "$1/seed-db"
 
 npm install -s
