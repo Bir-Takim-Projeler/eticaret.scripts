@@ -9,7 +9,7 @@ fi
 echo -e "Creating cluster"
 
 data=$(curl -s -i -o response.txt   -w "%{http_code}" -X POST http://127.0.0.1:8091/clusterInit \
-  -d services=kv,n1ql \
+  -d services=kv,n1ql,index,fts,eventing,cbas \
   -d username=administrator  \
   -d password=administrator \
   -d port=SAME \
