@@ -33,7 +33,7 @@ do
             -u administrator:administrator \
             -d name="$collection" \
             -d maxTTL=0)
-    if [ $data -eq 200 ];then echo -e "Collection '$collection' created on ecommerce._default\n___"
+    if [ $data -eq 200 ];then echo -e "Collection '$collection' created on ecommerce._d fault\n___"
     else echo -e "Collection '$collection' already exist in ecommerce._default. Skipped creating collection\n___"; fi
     rm response.txt 
     
@@ -42,9 +42,13 @@ done
 
 echo -e "___________________\nSeeding db"
 
+
+if [ !$2 -eq test ]; then
 cd "$1/seed-db"
 
 npm install -s
 
 node index -s
 echo "Done."
+
+fi
