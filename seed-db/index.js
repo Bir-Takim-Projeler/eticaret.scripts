@@ -21,7 +21,7 @@ const { connect, PasswordAuthenticator } = require("couchbase");
         try {
             await cluster.query(`CREATE PRIMARY INDEX \`#${collection}\` ON \`ecommerce\`._default.\`${collection}\``)
         } catch (error) {
-             console.log("primary index already exist on collection: %s", collection)
+            console.log("primary index already exist on collection: %s", collection)
         }
 
     }

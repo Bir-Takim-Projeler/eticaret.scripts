@@ -260,10 +260,10 @@ elif [ "$ENV" = "dev" ]; then
     createBucket
     createCollections
     npm install seed-db/package.json -s
-    node seed-db/index -s
+    node seed-db/index.js -s
     if [ $SEED ]; then
         echo seed 
-        node seed-db/seed -s
+        node seed-db/seed.js -s
         echo "Done."
     else 
         echo "Done."
