@@ -113,8 +113,7 @@ function getRunningDbs() {
         docker create --name ecommerce_dev -p 8091-8096:8091-8096 -p 11210-11211:11210-11211 couchbase
     fi
 
-    devDb=$(docker container inspect ecommerce_dev | grep -oP '(?<="Status": ")[^"]*' ) 
-    testDb=$(docker container inspect ecommerce_test  | grep -oP '(?<="Status": ")[^"]*' ) 
+  
 
 }
 
@@ -129,6 +128,18 @@ function shutDownTestDatabase() {
     fi
 }
 
+function wait_for() {
+    timeout=$1
+    shift 1
+    until [ $timeout -le 0 ] || ("$@" &> /dev/null); do
+        echo waiting for "$@"
+        sleep 1
+        timeout=$(( timeout - 1 ))
+    done
+    if [ $timeout -le 0 ]; then
+        return 1
+    fi
+}
 
 function startTestDatabase() {
     testDb=$(docker container inspect ecommerce_test | grep -oP '(?<="Status": ")[^"]*' ) 
@@ -136,7 +147,9 @@ function startTestDatabase() {
         echo -e "test database already running\n"
     else 
         resp=$(docker container start ecommerce_test)
+        sleep 20s
         echo "test database started\n"
+        devDb=$(docker container inspect ecommerce_dev | grep -oP '(?<="Status": ")[^"]*' ) 
     fi
 }
 
@@ -158,7 +171,11 @@ function startDevDatabase() {
         echo -e "dev database already running\n"
     else 
         resp=$(docker container start ecommerce_dev)
+        sleep 20s
         echo "dev database started\n"
+
+        
+        testDb=$(docker container inspect ecommerce_test  | grep -oP '(?<="Status": ")[^"]*' ) 
     fi
 }
 
@@ -168,13 +185,14 @@ function startDevDatabase() {
 '
 function createBucket() {
     echo -e "Createing bucket name \"$CB_BUCKET_NAME\" on couchbas://$CB_HOST\n"
-    data="$(curl -s -i -o response.txt   -w "%{http_code}"  -X POST http://$CB_HOST:$CB_PORT/pools/default/buckets \
+    data=$(curl -s -i -o response.txt   -w "%{http_code}"  -X POST http://$CB_HOST:$CB_PORT/pools/default/buckets \
                     -u $CB_USERNAME:$CB_PASSWORD \
                     -d name=$CB_BUCKET_NAME \
                     -d bucketType=couchbase \
                     -d ramQuota=512 \
-                    -d durabilityMinLevel=none)"; 
-
+                    -d durabilityMinLevel=none \
+                    -d flushEnabled=1); 
+    
     rm response.txt
     if [ $data -eq 400 ]; then
         echo -e "Bucket \'ecommerce\' already exist\nSkipping creating bucket\n"
@@ -186,12 +204,21 @@ function createBucket() {
 
 
 function flushTestDbBucket() {
+
+  
     echo -e "______________________________________________________\n "
-    echo -e "flushing test bucket"
-    data="$(curl -s -i -o response.txt  -w "%{http_code}"  -X POST -u $CB_USERNAME:$CB_PASSWORD \
-        http://$CB_HOST:$CB_PORT/pools/default/buckets/$CB_BUCKET_NAME/controller/doFlush)"
+    echo -e "check if bucket exist\n"
+    data=$(curl -s -i -o response.txt  -w "%{http_code}"  -X POST -u $CB_USERNAME:$CB_PASSWORD \
+        http://$CB_HOST:$CB_PORT/pools/default/buckets/$CB_BUCKET_NAME/controller/doFlush)
+
+    echo -e "______________________________________________________\n "
+
+    if [ "$data" = "200" ]; then
+        echo -e "Bucket exist\nBucket flushed\n"
+    else 
+        echo -e "Bucket doest not exist\n"
+    fi
     rm response.txt
-    echo -e "______________________________________________________\n "
 }
 
 
@@ -220,8 +247,8 @@ if  [ "$ENV" = "test" ]; then
     getRunningDbs
     shutDownDevDatabase
     startTestDatabase
-    flushTestDbBucket
     createCluster
+    flushTestDbBucket
     createBucket
     createCollections
 elif [ "$ENV" = "dev" ]; then
