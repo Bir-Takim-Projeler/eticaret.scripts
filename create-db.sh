@@ -103,12 +103,12 @@ function getRunningDbs() {
 
     if [ $( docker ps -a | grep ecommerce_test | wc -l ) -lt 1 ]; then
         echo "test database container doesnt exist, creating new test database container"
-        resp=$(docker create --name ecommerce_test -p 8091-8096:8091-8096 -p 11210-11211:11210-11211 couchbase)
+        resp=$(docker create --name ecommerce_test -p  8091-8097:8091-8097 -p 9123:9123 -p 9140:9140  -p 11210-11211:11210-11211 -p 11280:11280  couchbase)
     fi
 
     if [ $( docker ps -a | grep ecommerce_dev | wc -l ) -lt 1 ]; then
         echo "dev database container doesnt exist, creating new dev database container\n"
-        docker create --name ecommerce_dev -p 8091-8096:8091-8096 -p 11210-11211:11210-11211 couchbase
+        docker create --name ecommerce_dev -p  8091-8097:8091-8097 -p 9123:9123 -p 9140:9140  -p 11210-11211:11210-11211 -p 11280:11280 couchbase
     fi
 
   
