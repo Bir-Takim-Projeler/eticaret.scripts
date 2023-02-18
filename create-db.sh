@@ -189,7 +189,7 @@ function flushTestDbBucket() {
     echo -e "______________________________________________________\n "
     echo -e "flushing test bucket"
     data="$(curl -s -i -o response.txt  -w "%{http_code}"  -X POST -u $CB_USERNAME:$CB_PASSWORD \
-        http://localhost:8091/pools/default/buckets/$CB_BUCKET_NAME/controller/doFlush)"
+        http://$CB_HOST:$CB_PORT/pools/default/buckets/$CB_BUCKET_NAME/controller/doFlush)"
     rm response.txt
     echo -e "______________________________________________________\n "
 }
