@@ -240,7 +240,7 @@ function createCollections() {
       
 }
 
- # creates cluster if not exist yet
+npm install seed-db/package.json -s
 if  [ "$ENV" = "test" ]; then
 
     echo -e "Script running on $ENV enviroment\n"
@@ -251,6 +251,7 @@ if  [ "$ENV" = "test" ]; then
     flushTestDbBucket
     createBucket
     createCollections
+    node seed-db/index.js -s
 elif [ "$ENV" = "dev" ]; then
     echo -e "build database for development env"
     getRunningDbs
@@ -259,8 +260,8 @@ elif [ "$ENV" = "dev" ]; then
     createCluster
     createBucket
     createCollections
-    npm install seed-db/package.json -s
-    node seed-db/index.js -s
+ 
+ 
     if [ $SEED ]; then
         echo seed 
         node seed-db/seed.js -s
