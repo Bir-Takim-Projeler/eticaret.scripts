@@ -4,6 +4,7 @@
 
 yarn load:scripts
 yarn load:proto
+yarn build
 cd libs/entities 
 yarn install && tsc
 cd ../..
