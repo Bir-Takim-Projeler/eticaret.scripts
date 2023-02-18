@@ -80,16 +80,22 @@ done
 function createCluster() {
     
     echo -e "Creating cluster\n"
-    data="$(curl -s -i -o response.txt -w "%{http_code}" -X POST http://$CB_HOST:$CB_PORT/clusterInit \
-    -d "services=kv%2Cn1ql%2Cindex" \
-    -d "clusterName=$CB_CLUSTER_NAME" \
-    -d "memoryQuota=512" \
-    -d "nodeEncryption=off" \
-    -d "username=$CB_USERNAME" \
-    -d "password=$CB_PASSWORD" \
-    -d "port=SAME" )";
+    data="$(curl  -o response.txt   -w "%{http_code}"  -X POST http://$CB_HOST:$CB_PORT/clusterInit \
+            -d "hostname=127.0.0.1" \
+            -d "sendStats=true" \
+            -d "services=kv%2Cn1ql%2Cindex" \
+            -d "clusterName=$CB_CLUSTER_NAME" \
+            -d "memoryQuota=512" \
+            -d "afamily=ipv4" \
+            -d "afamilyOnly=false" \
+            -d "nodeEncryption=off" \
+            -d "username=$CB_USERNAME" \
+            -d "password=$CB_PASSWORD" \
+            -d "port=SAME" \
+            -d "indexerStorageMode=plasma" \
+            -d "allowedHosts=127.0.0.1")";
 
-    rm response.txt 
+   
     if [ $data -eq 200 ]; then
         echo -e "Cluster 'ecommerce' created\n "
     else
@@ -98,8 +104,7 @@ function createCluster() {
     echo -e "______________________________________________________\n "
 
 
-    $(curl  -v -X POST http://$CB_HOST:$CB_PORT/node/controller/setupServices \
--d 'services=kv%2Cn1ql%2Cindex');
+    rm response.txt
 }
 
 
