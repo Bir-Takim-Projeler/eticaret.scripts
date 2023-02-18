@@ -96,6 +96,10 @@ function createCluster() {
         echo -e "Cluster 'ecommerce' already exist\nSkipping creating cluster\n "
     fi
     echo -e "______________________________________________________\n "
+
+
+    $(curl  -v -X POST http://$CB_HOST:$CB_PORT/node/controller/setupServices \
+-d 'services=kv%2Cn1ql%2Cindex');
 }
 
 
