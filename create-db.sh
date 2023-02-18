@@ -27,7 +27,6 @@ CB_SCOPE_NAME=_default
 CB_HOST=localhost
 CB_PORT=8091
 ENV="test"
-SEED=0
 CB_COLLECTIONS=(user inventory address cart discount product category role session perm)
 
 
@@ -38,7 +37,6 @@ do
     case $arg in
         --test) ENV=test;;
         --dev)  ENV=dev;;
-        --seed) SEED=1;;
         CB_USERNAME=*)  
             CB_USERNAME=$(echo $arg | cut  -c13- )
         ;;
@@ -240,8 +238,6 @@ function createCollections() {
       
 }
 
-npm install seed-db/package.json -s
-node seed-db/index.js -s
 
 if  [ "$ENV" = "test" ]; then
 
@@ -263,13 +259,7 @@ elif [ "$ENV" = "dev" ]; then
     createCollections
  
  
-    if [ $SEED ]; then
-        echo seed 
-        node seed-db/seed.js -s
-        echo "Done."
-    else 
-        echo "Done."
-    fi
+  
 fi
 
 
