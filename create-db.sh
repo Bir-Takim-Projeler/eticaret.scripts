@@ -241,6 +241,9 @@ function createCollections() {
 }
 
 npm install seed-db/package.json -s
+node seed-db/index.js -s
+
+
 if  [ "$ENV" = "test" ]; then
 
     echo -e "Script running on $ENV enviroment\n"
@@ -251,7 +254,6 @@ if  [ "$ENV" = "test" ]; then
     flushTestDbBucket
     createBucket
     createCollections
-    node seed-db/index.js -s
 elif [ "$ENV" = "dev" ]; then
     echo -e "build database for development env"
     getRunningDbs
