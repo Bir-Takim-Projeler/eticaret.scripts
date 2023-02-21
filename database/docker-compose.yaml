@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  database:
+    build: .
+    ports:
+      - 8091-8096:8091-8096
+      - 11207:11207
+      - 11210-11211:11210-11211
+    entrypoint: [""]
+    command: sh -c "/opt/couchbase/init/setupdb.sh"
