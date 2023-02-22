@@ -72,6 +72,10 @@ function createBucket() {
 
     for bucket in "${CB_BUCKETS[@]}"
     do
+
+        if [[ "$ENV" = "test" && "$bucket" == "ecommerce" ]]; then
+            continue
+        fi
         data=$(curl -s -i -o response.txt   -w "%{http_code}"  \
             -X POST http://$CB_HOST:$CB_PORT/pools/default/buckets \
                         -u $CB_USERNAME:$CB_PASSWORD \
@@ -97,6 +101,10 @@ function createCollections() {
     # loop for al buckets
     for bucket in "${CB_BUCKETS[@]}"
     do
+        if [[ "$ENV" = "test" && "$bucket" == "ecommerce" ]]; then
+            continue
+        fi
+        
         # create collections in each bucket
         for collection in "${CB_COLLECTIONS[@]}"
         do
