@@ -22,7 +22,7 @@ fi
 CB_USERNAME=administrator
 CB_PASSWORD=administrator
 CB_CLUSTER_NAME=ecommerce
-CB_BUCKETS=(ecommerce ecommerce_test)
+CB_BUCKETS=("ecommerce" "ecommerce_test")
 CB_SCOPE_NAME=_default
 CB_HOST=127.0.0.1
 CB_PORT=8091
