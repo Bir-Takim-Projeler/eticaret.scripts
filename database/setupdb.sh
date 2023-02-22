@@ -12,10 +12,10 @@ if [ ! -x "$(which docker)" ]; then
     exit 1
 fi
 
-# if [ ! -x "$(which zsh)" ]; then
-#     echo Please install zsh shell before running this script
-#     exit 1
-# fi
+if [ ! -x "$(which bash)" ]; then
+    echo Please install zsh shell before running this script
+    exit 1
+fi
 
 
 # update variables of your project setup
