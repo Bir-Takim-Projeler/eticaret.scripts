@@ -26,6 +26,7 @@ CB_BUCKET_NAME=$CB_CLUSTER_NAME
 CB_SCOPE_NAME=_default
 CB_HOST=localhost
 CB_PORT=8091
+ENVS=(test dev)
 ENV="test"
 CB_COLLECTIONS=(user inventory address cart discount product category role session perm)
 
@@ -187,26 +188,19 @@ function startDevDatabase() {
 }
 
 
-: '
-    creates `ecommerce` bucket if not exist yet
-'
+# creates test and dev env buckets
 function createBucket() {
-    echo -e "Createing bucket name \"$CB_BUCKET_NAME\" on couchbas://$CB_HOST\n"
-    data=$(curl -s -i -o response.txt   -w "%{http_code}"  -X POST http://$CB_HOST:$CB_PORT/pools/default/buckets \
-                    -u $CB_USERNAME:$CB_PASSWORD \
-                    -d name=$CB_BUCKET_NAME \
-                    -d bucketType=couchbase \
-                    -d ramQuota=512 \
-                    -d durabilityMinLevel=none \
-                    -d flushEnabled=1); 
+
+    data=$(curl -s -i -o response.txt  -w "%{http_code}" \
+            -X POST http://$CB_HOST:$CB_PORT/pools/default/buckets \
+            -u $CB_USERNAME:$CB_PASSWORD \
+            -d name=$CB_BUCKET_NAME \
+            -d bucketType=couchbase \
+            -d ramQuota=512 \
+            -d durabilityMinLevel=none \
+            -d flushEnabled=1); 
     
     rm response.txt
-    if [ $data -eq 400 ]; then
-        echo -e "Bucket \'ecommerce\' already exist\nSkipping creating bucket\n"
-    elif [ $data -eq 200 ]; then
-        echo -e "Bucket 'ecommerce' created\n"
-    fi
-    echo -e "______________________________________________________\n"
 };
 
 
@@ -230,45 +224,37 @@ function flushTestDbBucket() {
 
 
 function createCollections() {
-    echo -e "______________________________________________________\n "
-    echo -e "Checking collections\n"
-    for collection in "${CB_COLLECTIONS[@]}"
+    # loop for al buckets
+    for bucket in "${CB_BUCKETS[@]}"
     do
-        data=$(curl -s -i -o response.txt   -w "%{http_code}" -X POST  http://$CB_HOST:$CB_PORT/pools/default/buckets/$CB_BUCKET_NAME/scopes/_default/collections \
-                -u $CB_USERNAME:$CB_PASSWORD \
-                -d name="$collection" \
-                -d maxTTL=0)
-        if [ $data -eq 200 ];then echo -e "Collection '$collection' created\n"
-        else echo -e "Collection '$collection' already exist\n"; fi
-        rm response.txt 
-        
+        # create collections in each bucket
+        for collection in "${CB_COLLECTIONS[@]}"
+        do
+            data=$(curl -s -i -o response.txt   -w "%{http_code}" -X POST  http://$CB_HOST:$CB_PORT/pools/default/buckets/$bucket/scopes/_default/collections \
+                    -u $CB_USERNAME:$CB_PASSWORD \
+                    -d name="$collection" \
+                    -d maxTTL=0)
+            if [ $data -eq 200 ]
+            then 
+                echo  "Collection '$collection' created\n"
+            else 
+                echo "Error:collection exist; quit with exit code 1"
+                exit 1
+            fi
+            rm response.txt 
+            
+        done
     done
-    echo -e "______________________________________________________\n "
       
 }
 
 
 if  [ "$ENV" = "test" ]; then
-
-    echo -e "Script running on $ENV enviroment\n"
-    getRunningDbs
-    shutDownDevDatabase
-    startTestDatabase
-    createCluster
     flushTestDbBucket
-    createBucket
-    createCollections
-elif [ "$ENV" = "dev" ]; then
-    echo -e "build database for development env"
-    getRunningDbs
-    shutDownTestDatabase
-    startDevDatabase
-    createCluster
-    createBucket
-    createCollections
- 
- 
-  
+
 fi
 
+    createCluster
+    createBucket
+    createCollections
 
