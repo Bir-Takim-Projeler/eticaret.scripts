@@ -12,10 +12,10 @@ if [ ! -x "$(which docker)" ]; then
     exit 1
 fi
 
-if [ ! -x "$(which zsh)" ]; then
-    echo Please install zsh shell before running this script
-    exit 1
-fi
+# if [ ! -x "$(which zsh)" ]; then
+#     echo Please install zsh shell before running this script
+#     exit 1
+# fi
 
 
 # update variables of your project setup
@@ -86,6 +86,8 @@ function createBucket() {
         else 
             echo bucket already exist
         fi
+
+        sleep 10s
     done
 };
 
